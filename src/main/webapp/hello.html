@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WPattern Frameworks WebSocket</title>
+
+<script type="text/javascript">
+       var wsUri = getRootUri() + "/wpattern-frameworks-websocket/hello";
+       var websocket = new WebSocket(wsUri);
+
+       function getRootUri() {
+    	   return "ws://" + (document.location.hostname == "" ? "localhost" : document.location.hostname) + ":" +
+           (document.location.port == "" ? "8080" : document.location.port);
+       }
+
+       function init() {
+           output = document.getElementById("output");
+           
+           websocket.onopen = function(evt) {
+               onOpen(evt);
+           };
+           
+           websocket.onmessage = function(evt) {
+               onMessage(evt);
+           };
+           
+           websocket.onerror = function(evt) {
+               onError(evt);
+           };
+       }
+
+       function sendMessage() {
+           websocket.send(document.getElementById("textID").value);
+       }
+
+       function onOpen(evt) {
+           writeToScreen("Connected to Endpoint!");
+       }
+
+       function onMessage(evt) {
+           writeToScreen("Message Received: " + evt.data);
+       }
+
+       function onError(evt) {
+           writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+       }
+
+       function doSend(message) {
+           writeToScreen("Message Sent: " + message);
+           websocket.send(message);
+       }
+
+       function writeToScreen(message) {
+           var pre = document.createElement("p");
+           pre.style.wordWrap = "break-word";
+           pre.innerHTML = message;
+             
+           output.appendChild(pre);
+       }
+
+       window.addEventListener("load", init, false);
+   </script>
+</head>
+
+<body>
+	<h2 style="text-align: center;">Hello WebSocket Client</h2>
+
+	<br>
+
+	<div style="text-align: center;">
+		<form action="">
+			<input onclick="sendMessage()" value="Send" type="button">
+			<input id="textID" name="message" value="Hello WebSocket!" type="text">
+			<br>
+		</form>
+	</div>
+	<div id="output"></div>
+</body>
+</html>
